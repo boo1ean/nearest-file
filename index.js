@@ -1,19 +1,18 @@
-var join = require('path').join;
-    fs = require('fs'),
-    exists = fs.existsSync,
-    read = fs.readFileSync;
+var pathModule = require('path'),
+    fs = require('fs');
 
 var find = function(path, filename) {
-	if (!path.length) {
+	if (!path) {
 		return null;
 	}
 
-	var filepath = join(path, filename);
-	if (exists(filepath)) {
-		return read(filepath).toString();
+	var filepath = pathModule.join(path, filename);
+	if (fs.existsSync(filepath)) {
+		return fs.readFileSync(filepath).toString();
 	}
 
-	return find(path.slice(0, path.lastIndexOf('/')), filename);
+	var nextpath = pathModule.dirname(path);
+	return find(nextpath !== path ? nextpath : '', filename);
 };
 
 module.exports = find;
